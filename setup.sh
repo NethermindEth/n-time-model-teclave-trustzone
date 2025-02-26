@@ -42,10 +42,13 @@ fi
 # "cargo --version" since it has no other effect.
 cargo --version >/dev/null
 
+# Install missing dependencies
+apt -y install device-tree-compiler uuid uuid-dev
+
 ##########################################
 # install toolchain
 if [[ "$(uname -m)" == "aarch64" ]]; then
-    apt update && apt -y install gcc gcc-arm-linux-gnueabihf
+    apt update && apt -y install gcc gcc-arm-linux-gnueabihf 
 else
     apt update && apt -y install gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf
 fi

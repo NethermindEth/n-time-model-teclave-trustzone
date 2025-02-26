@@ -1,3 +1,4 @@
+
 # Teaclave TrustZone SDK
 
 [![License](https://img.shields.io/badge/license-Apache-green.svg)](LICENSE)
@@ -25,6 +26,51 @@ breaking changes to the legacy `master` branch.
 If you're using the `master` branch and wish to migrate to the new development 
 branch (`main`), please refer to the 
 [migration guide](docs/migrating-to-new-building-env.md).
+
+## One-Time Model POC in Rust
+
+This project demonstrates a one-time execution model using Teaclave TrustZone SDK in Rust. The implementation provides a trusted application that can only execute a specific function (sorting an array) a limited number of times, enforced securely through TEE secure storage.
+
+### Setup and Building
+
+1. **Setup Development Environment**:
+   ```sh
+   ./setup.sh
+   ```
+   Note: The setup script is tailored for Ubuntu and has been updated to install missing dependencies automatically.
+
+2. **Build OP-TEE Libraries**:
+   ```sh
+   ./build_optee_libraries.sh optee/
+   ```
+   This will create the `optee` folder and compile the necessary libraries.
+
+3. **Configure Environment**:
+   ```sh
+   source environment
+   ```
+   This sets up all required toolchain and library paths.
+
+4. **Build the One-Time Sort Example**:
+   ```sh
+   make -C examples/one_time_sort-rs
+   ```
+   This will compile both the host application and trusted application.
+
+### Running the Example
+
+TODO: Detailed running instructions will be added in a future update. The process will involve copying the built binaries to the target platform (QEMU or physical hardware) and executing the host application, which will demonstrate the one-time execution limitation of the trusted application.
+
+### Implementation Details
+
+The one-time sort example implements:
+- Secure counter storage using TEE secure storage
+- Configurable execution limit (currently set to 1)
+- Array sorting within the trusted execution environment
+- Enforcement of the execution limit at the TA level
+- Error reporting when execution limit is reached
+
+This serves as a proof-of-concept for one-time model execution, which can be extended to more complex use cases like one-time inference on AI models.
 
 ## Table of Contents
 
