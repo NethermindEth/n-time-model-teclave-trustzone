@@ -1,0 +1,10 @@
+[package]
+name = "token_flow-rs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+libc = "0.2.171"
+proto = { path = "../proto" }
+optee-teec = { path = "../../../optee-teec" }
+clap = { version = "4.5.34", features = ["derive"] }

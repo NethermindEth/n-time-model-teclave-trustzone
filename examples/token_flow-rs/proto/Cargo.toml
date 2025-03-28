@@ -1,0 +1,9 @@
+[package]
+name = "proto"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[build_dependencies]
+uuid = { version = "1.6.1", default-features = false }
