@@ -1,49 +1,52 @@
-// Licensed to the Apache Software Foundation (ASF) under one
-// or more contributor license agreements.
-
-use optee_teec::{Context, Operation, ParamTmpRef, ParamNone, Session, Uuid};
+use optee_teec::{Context, Operation, ParamNone, ParamTmpRef, Uuid};
 use proto::{Command, UUID};
+use std::env;
+use std::mem;
 
 fn main() -> optee_teec::Result<()> {
+    let args: Vec<String> = env::args().skip(1).collect();
+    if args.is_empty() {
+        eprintln!("Usage: host <int1> <int2> ...");
+        return Ok(());
+    }
+
+    let mut numbers: Vec<i32> = match args.iter().map(|s| s.parse()).collect() {
+        Ok(v) => v,
+        Err(_) => {
+            eprintln!("All arguments must be valid integers.");
+            return Ok(());
+        }
+    };
+
+    println!("Original array: {:?}", numbers);
+
+    // Transmute &[i32] -> &[u8]
+    let byte_slice: &mut [u8] = unsafe {
+        core::slice::from_raw_parts_mut(
+            numbers.as_mut_ptr() as *mut u8,
+            numbers.len() * mem::size_of::<i32>(),
+        )
+    };
+
     let mut ctx = Context::new()?;
     let uuid = Uuid::parse_str(UUID).unwrap();
     let mut session = ctx.open_session(uuid)?;
 
-    println!("\n----- One-Time Sort Trusted Application -----");
-    
-    // Create a sample array to sort
-    let mut sample_array = [5, 3, 8, 1, 9, 2, 7, 4, 6, 0];
-    println!("Original array: {:?}", sample_array);
-    
-    // Set up parameters - we're sending the array as a parameter
-    let p0 = ParamTmpRef::new_input(&sample_array);
+    let p0 = ParamTmpRef::new_output(byte_slice);
     let mut operation = Operation::new(0, p0, ParamNone, ParamNone, ParamNone);
 
-    // First attempt
-    println!("\nAttempt #1 - First execution:");
+    println!("\nAttempting TA sort...");
     match session.invoke_command(Command::Sort as u32, &mut operation) {
         Ok(_) => {
             println!("Sort operation completed successfully!");
-            println!("Array after sorting: {:?}", sample_array);
-        },
-        Err(e) => {
-            println!("Error: {:?}", e);
+            println!("Sorted array: {:?}", numbers);
         }
-    }
-    
-    // Second attempt
-    println!("\nAttempt #2 - Trying again:");
-    match session.invoke_command(Command::Sort as u32, &mut operation) {
-        Ok(_) => {
-            println!("Sort operation completed successfully!");
-            println!("Array after sorting: {:?}", sample_array);
-        },
         Err(e) => {
-            println!("Error: {:?}", e);
-            println!("(Expected error - TA should only execute once)");
+            println!("Error from TA: {:?}", e);
+            println!("(This is expected if TA was already executed once)");
         }
     }
 
-    println!("\nWe're done, close and release TEE resources");
+    println!("\nDone.");
     Ok(())
 }

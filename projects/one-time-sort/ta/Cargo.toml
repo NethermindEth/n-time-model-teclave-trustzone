@@ -28,6 +28,7 @@ edition = "2018"
 proto = { path = "../proto" }
 optee-utee-sys = { path = "../../../optee-utee/optee-utee-sys" }
 optee-utee = { path = "../../../optee-utee" }
+n_time_model = { path = "../../../n_time_model" }
 
 [build-dependencies]
 proto = { path = "../proto" }
