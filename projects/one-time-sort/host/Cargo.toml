@@ -16,13 +16,13 @@
 # under the License.
 
 [package]
-name = "proto"
-version = "0.4.0"
-authors = ["Teaclave Contributors <dev@teaclave.apache.org>"]
-license = "Apache-2.0"
-repository = "https://github.com/apache/incubator-teaclave-trustzone-sdk.git"
-description = "Data structures and functions shared by host and TA."
+name = "one_time_sort-rs"
 edition = "2018"
 
 [dependencies]
-num_enum = { version = "0.7.3", default-features = false }
+libc = "0.2.48"
+proto = { path = "../proto" }
+optee-teec = { path = "../../../optee-teec" }
+
+[profile.release]
+lto = true

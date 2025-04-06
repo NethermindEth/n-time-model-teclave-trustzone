@@ -15,19 +15,22 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#![no_std]
-use num_enum::{FromPrimitive, IntoPrimitive};
+use std::fs;
+use std::path::PathBuf;
+use std::fs::File;
+use std::env;
+use std::io::Write;
 
-#[derive(FromPrimitive, IntoPrimitive)]
-#[repr(u32)]
-pub enum Command {
-    IncValue,
-    DecValue,
-    #[default]
-    Unknown,
+fn main() {
+    let uuid = match fs::read_to_string("../uuid.txt") {
+        Ok(u) => {
+            u.trim().to_string()
+        },
+        Err(_) => {
+            panic!("Cannot find uuid.txt");
+        }
+    };
+    let out = &PathBuf::from(env::var_os("OUT_DIR").unwrap());
+    let mut buffer = File::create(out.join("uuid.txt")).unwrap();
+    write!(buffer, "{}", uuid).unwrap();
 }
-
-// If Uuid::parse_str() returns an InvalidLength error, there may be an extra
-// newline in your uuid.txt file. You can remove it by running 
-// `truncate -s 36 uuid.txt`.
-pub const UUID: &str = &include_str!("../../uuid.txt");

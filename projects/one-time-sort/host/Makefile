@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-NAME := hello_world-rs
+NAME := one_time_sort-rs
 
 TARGET ?= aarch64-unknown-linux-gnu
 CROSS_COMPILE ?= aarch64-linux-gnu-
