@@ -144,3 +144,46 @@ The TA extracts the signed payload, verifies it using the embedded public key, a
 
 This model can be extended to support **one-time inference**, **limited API calls**, or **time-limited secrets**, serving as a foundation for constrained-use secure applications.
 
+
+## t-slices
+**t-slices** are included as submodule of the repository, to clone them, run:
+
+```sh
+git submodule update --init --recursive
+```
+
+### Build and Install
+
+```sh
+cd tslice
+export TA_DEV_KIT_DIR=$PWD/../export-ta_arm64
+make -j8
+```
+
+Build command produced ta and host files, which can be copied to host, toghether with datafiles.zip:
+
+```sh
+
+scp 7fc5c039-0542-4ee1-80af-b4eab2f1998d.ta \
+   host/optee_example_tslices \
+   datafiles.zip \
+   <username>@<host>:<path to install dir>
+```
+
+and then on host copy ta file to /lib/optee_armtz:
+
+```sh
+cd <path to install dir>
+sudo cp *.ta /lib/optee_armtz 
+```
+
+Unpack datafiles.zip:
+```sh
+unzip datafiles.zip
+```
+
+### Running
+
+```sh
+sudo ./host/optee_example_tslices classifier predict datafiles/cfg/imagenet1k.data datafiles/cfg/alexnet.cfg alexnet.weights data/horses.jp
+```
